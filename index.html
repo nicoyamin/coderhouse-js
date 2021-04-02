@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>CoderHouse JS - Proyecto final</title>
+</head>
+
+<body>
+    <form class="textForm">
+        <h4>Ingresar texto y seleccionar una o mas opciones</h4>
+        <div>
+            <textarea style="width: 50%; max-width: 50%;" name="pieceInput" placeholder="Ingresar tu texto aqui..." aria-label="Search"></textarea>
+        </div>
+        <div>
+            <label for="countWords">Contar palabras?</label>
+            <input type="checkbox" name="countWords" value="0" checked />
+        </div>
+        <div>
+            <label for="countPages">Calcular paginas?</label>
+            <input type="checkbox" name="countPages" value="0" checked />
+        </div>
+        <div>
+            <label for="capitalizeText">Capitalizar oraciones?</label>
+            <input type="checkbox" name="capitalizeText" value="0" checked />
+        </div>
+        <div>
+            <button id="searchButton" type="submit">Enviar</button>
+        </div>
+    </form>
+
+    <label>Numero de palabras: </label>
+    <p id="wordCount">0</p>
+    <label>Numero de paginas: </label>
+    <p id="pageCount">0</p>
+    <label>Texto capitalizado: </label>
+    <div>
+        <textarea id="capitalizedText" placeholder="Aqui aparecera tu texto capitalizado..."></textarea>
+    </div>
+
+
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>
