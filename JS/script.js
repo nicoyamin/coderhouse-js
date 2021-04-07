@@ -1,3 +1,16 @@
+class Piece{
+    constructor(title, text, author, genre) {
+        this.title = title;
+        this.text = text;
+        this.genre = genre;
+        if(author === "") {
+            this.author = "Anonimo";
+        } else {
+            this.author = author;
+        }
+    }
+
+}
 
 let wordsPerPage = 500;
 
@@ -7,28 +20,29 @@ document.querySelector('.textForm').addEventListener('submit', (e) => {
     if(formData.get("pieceInput") === "") {
         alert("Por favor ingrese un texto!");
     } else {
-        processText(formData);
+        performSelectedOperations(formData);
     }
-
 });
 
-function processText(formData) {
+function performSelectedOperations(formData) {
     let wordCount = 0;
-    let pieceText = formData.get("pieceInput");
+    const piece = new Piece(formData.get("title"), formData.get("pieceInput"), formData.get("author"), formData.get("genre"));
+
+    console.log(piece);
 
     if (formData.get("countWords")) {
-        wordCount = countWords(pieceText);
+        wordCount = countWords(piece.text);
     }
 
     if (formData.get("countPages")) {
         if (!formData.get("countWords")) {
-            wordCount = countWords(pieceText);
+            wordCount = countWords(piece.text);
         }
         countPages(wordCount);
     }
 
     if (formData.get("capitalizeText")) {
-        capitalizeText(pieceText);
+        capitalizeText(piece.text);
     }
 }
 
