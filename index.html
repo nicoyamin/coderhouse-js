@@ -9,9 +9,21 @@
 
 <body>
     <form class="textForm">
-        <h4>Ingresar texto y seleccionar una o mas opciones</h4>
+        <h4>Ingresar informacion de la obra y seleccionar una o mas opciones</h4>
         <div>
-            <textarea style="width: 50%; max-width: 50%;" name="pieceInput" placeholder="Ingresar tu texto aqui..." aria-label="Search"></textarea>
+            <label for="title">Titulo:</label>
+            <input required type="text" placeholder="Titulo de la obra" name="title">
+        </div><br>
+        <div>
+            <label for="author">Autor:</label>
+            <input type="text" placeholder="Autor de la obra" name="author">
+        </div><br>
+        <div>
+            <label for="genre">Genero: </label>
+            <input type="text" placeholder="Genero de la obra" name="genre">
+        </div><br>
+        <div>
+            <textarea required style="width: 50%; max-width: 50%;" name="pieceInput" placeholder="Ingresar tu texto aqui..." aria-label="Search"></textarea>
         </div>
         <div>
             <label for="countWords">Contar palabras?</label>
