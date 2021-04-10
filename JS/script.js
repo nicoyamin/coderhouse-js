@@ -1,13 +1,9 @@
 class Piece{
-    constructor(title, text, author, genre) {
+    constructor(title, text, genre, author = "Anonimo") {
         this.title = title;
         this.text = text;
         this.genre = genre;
-        if(author === "") {
-            this.author = "Anonimo";
-        } else {
-            this.author = author;
-        }
+        this.author = author;
     }
 
 }
