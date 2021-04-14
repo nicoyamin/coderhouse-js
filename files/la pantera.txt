@@ -1,0 +1,6 @@
+{
+  "title": "The panther",
+  "author": "Rainer Maria Rilke",
+  "genre": "Poetry",
+  "text": "His vision, from the constantly passing bars,has grown so weary that it cannot hold anything else. It seems to him there are a thousand bars; and behind the bars, no world. As he paces in cramped circles, over and over, the movement of his powerful soft strides is like a ritual dance around a center in which a mighty will stands paralyzed. Only at times, the curtain of the pupils lifts, quietly—. An image enters in, rushes down through the tensed, arrested muscles, plunges into the heart and is gone."
+}
