@@ -1,15 +1,18 @@
 class Piece{
-    constructor(title, text, genre, author = "Anonimo") {
+    constructor(title, text, genre, author = "Anonimo", words = 0) {
         this.title = title;
         this.text = text;
         this.genre = genre;
         this.author = author;
+        this.words = words;
     }
 
 }
 
 let wordsPerPage = 500;
+let book = [];
 
+//Submits text entered by user and performs selected operations
 document.querySelector('.textForm').addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -20,21 +23,41 @@ document.querySelector('.textForm').addEventListener('submit', (e) => {
     }
 });
 
-function performSelectedOperations(formData) {
-    let wordCount = 0;
-    const piece = new Piece(formData.get("title"), formData.get("pieceInput"), formData.get("author"), formData.get("genre"));
+//If user chooses to upload file, parses JSON and fills the form fields
+document.getElementById('inputFile').addEventListener('change', function() {
+              
+            var fileReader = new FileReader();
+            fileReader.onload=function(){
+                let loadedPiece = JSON.parse(fileReader.result);
+                console.log(loadedPiece);
 
-    console.log(piece);
+                document.getElementById('title').value = loadedPiece["title"];
+                document.getElementById('author').value = loadedPiece["author"];
+                document.getElementById('genre').value = loadedPiece["genre"];
+                document.getElementById('pieceInput').innerText = loadedPiece["text"];
+            }
+              
+            fileReader.readAsText(this.files[0]);
+        })
+
+ document.querySelector('.sortBook').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    sortBook(formData.get("sortCriteria"));   
+});       
+
+function performSelectedOperations(formData) {
+    let wordCount = countWords(formData.get("pieceInput"));
+    const piece = new Piece(formData.get("title"), formData.get("pieceInput"), formData.get("genre"), formData.get("author"), wordCount);
+    book.push(piece);
+    console.log(book);
 
     if (formData.get("countWords")) {
-        wordCount = countWords(piece.text);
+        document.getElementById('wordCount').innerText = wordCount;
     }
 
     if (formData.get("countPages")) {
-        if (!formData.get("countWords")) {
-            wordCount = countWords(piece.text);
-        }
-        countPages(wordCount);
+        countPages(piece.words);
     }
 
     if (formData.get("capitalizeText")) {
@@ -44,7 +67,6 @@ function performSelectedOperations(formData) {
 
 function countWords(text) {
     let wordCount = text.match(/(\w+)/g).length;
-    document.getElementById('wordCount').innerText = wordCount;
     return wordCount;
 }
 
@@ -60,4 +82,17 @@ function capitalizeText(text) {
         return sentence.charAt(0).toUpperCase() + sentence.substr(1).toLowerCase();
     });
     document.getElementById('capitalizedText').value = capitalizedText;
+}
+
+function sortBook(criteria) {
+    book.sort(sortByProperty(criteria));
+    alert("Obras ordenadas. Observar resultados en consola");
+    console.log(book);
+}
+
+function sortByProperty(property) {
+    return function (a,b) {
+        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        return result;
+    }
 }
