@@ -4,8 +4,37 @@ class Piece{
         this.text = text;
         this.genre = genre;
         this.author = author;
-        this.words = words;
+        this.words = this.text.match(/(\w+)/g).length;
     }
+
+    countWords() {
+        return this.text.match(/(\w+)/g).length;
+    }
+    
+    countPages() {
+        document.getElementById('pageCount').innerText = Math.ceil(this.words / wordsPerPage);
+    }
+    
+    capitalizeText() {
+        let sentenceRegex = /.+?([\.\?\!\;]\s|$)/g;
+        let capitalizedText = this.text.replace(sentenceRegex, function (sentence) {
+            return sentence.charAt(0).toUpperCase() + sentence.substr(1).toLowerCase();
+        });
+        document.getElementById('capitalizedText').value = capitalizedText;
+    }
+
+    addToTable() {
+        let table = document.getElementById("pieceTable");
+        let newRow   = table.insertRow();
+      
+        const keys = Object.keys(this)
+        for (const key of keys) {
+              if(key != "text") {
+                  let newCell  = newRow.insertCell();
+                  newCell.innerHTML = this[key];
+              }
+          }
+      }
 
 }
 
@@ -47,47 +76,32 @@ document.getElementById('inputFile').addEventListener('change', function() {
 });       
 
 function performSelectedOperations(formData) {
-    let wordCount = countWords(formData.get("pieceInput"));
-    const piece = new Piece(formData.get("title"), formData.get("pieceInput"), formData.get("genre"), formData.get("author"), wordCount);
+    const piece = new Piece(formData.get("title"), formData.get("pieceInput"), formData.get("genre"), formData.get("author"));
+    
     book.push(piece);
-    console.log(book);
 
     if (formData.get("countWords")) {
-        document.getElementById('wordCount').innerText = wordCount;
+        document.getElementById('wordCount').innerText = piece.words;
     }
 
     if (formData.get("countPages")) {
-        countPages(piece.words);
+        piece.countPages();
     }
 
     if (formData.get("capitalizeText")) {
-        capitalizeText(piece.text);
+        piece.capitalizeText();
     }
-}
 
-function countWords(text) {
-    let wordCount = text.match(/(\w+)/g).length;
-    return wordCount;
-}
-
-function countPages(wordCount) {
-    let pageCount = Math.ceil(wordCount / wordsPerPage);
-    document.getElementById('pageCount').innerText = pageCount;
-
-}
-
-function capitalizeText(text) {
-    let sentenceRegex = /.+?([\.\?\!\;]\s|$)/g;
-    let capitalizedText = text.replace(sentenceRegex, function (sentence) {
-        return sentence.charAt(0).toUpperCase() + sentence.substr(1).toLowerCase();
-    });
-    document.getElementById('capitalizedText').value = capitalizedText;
+    piece.addToTable();
 }
 
 function sortBook(criteria) {
     book.sort(sortByProperty(criteria));
-    alert("Obras ordenadas. Observar resultados en consola");
-    console.log(book);
+    let table = document.getElementById("pieceTable");
+    while (table.rows.length > 1) {
+        table.deleteRow(1);
+    }
+    book.forEach(piece => piece.addToTable());
 }
 
 function sortByProperty(property) {
@@ -96,3 +110,4 @@ function sortByProperty(property) {
         return result;
     }
 }
+
