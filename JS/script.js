@@ -40,6 +40,10 @@ class Piece{
 
 let wordsPerPage = 500;
 let book = [];
+let currentBookIndex = 0;
+let span = document.getElementsByClassName("close")[0];
+let nextPiece = document.getElementById("nextPiece");
+let previousPiece = document.getElementById("previousPiece");
 
 //Submits text entered by user and performs selected operations
 document.querySelector('.textForm').addEventListener('submit', (e) => {
@@ -69,11 +73,57 @@ document.getElementById('inputFile').addEventListener('change', function() {
             fileReader.readAsText(this.files[0]);
         })
 
+ //event listener for book sorting       
  document.querySelector('.sortBook').addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     sortBook(formData.get("sortCriteria"));   
-});       
+});     
+
+ //event listener for creating a book with selected pieces
+document.getElementById('createBookButton').addEventListener('click', (e) => {
+    e.preventDefault();
+    let bookModal = document.getElementById("bookModal");
+    displayPieceOnModal(currentBookIndex);
+    bookModal.style.display = "block";
+});
+
+span.onclick = function() {
+    bookModal.style.display = "none";
+  }
+
+nextPiece.onclick = function() {
+    if(currentBookIndex + 1 < book.length) {
+        displayPieceOnModal(++currentBookIndex);
+    } 
+}
+
+previousPiece.onclick = function() {
+    if(currentBookIndex - 1 >= 0) {
+        displayPieceOnModal(--currentBookIndex);
+    } 
+}
+
+function displayPieceOnModal(currentBookIndex) {
+    const currentPiece = book[currentBookIndex];
+
+    let modal = document.getElementById("pieceModal");
+    modal.innerHTML="";
+    
+    let title = document.createElement("h3");
+    title.textContent = currentPiece.title;
+
+    let author = document.createElement("cite");
+    author.textContent = "Autor: " + currentPiece.author;
+
+    let pieceText = document.createElement("p");
+    pieceText.textContent = currentPiece.text;
+
+    modal.appendChild(title);
+    modal.appendChild(author);
+    modal.appendChild(pieceText);
+
+}
 
 function performSelectedOperations(formData) {
     const piece = new Piece(formData.get("title"), formData.get("pieceInput"), formData.get("genre"), formData.get("author"));
@@ -109,5 +159,6 @@ function sortByProperty(property) {
         var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
         return result;
     }
+    
 }
 
