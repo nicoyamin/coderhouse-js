@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="css/style.css">
     <title>CoderHouse JS - Proyecto final</title>
 </head>
 
@@ -33,15 +34,15 @@
         </div>
         <div>
             <label for="countWords">Contar palabras?</label>
-            <input type="checkbox" name="countWords" value="0" checked />
+            <input type="checkbox" name="countWords" value="0" id="countWords" checked />
         </div>
         <div>
             <label for="countPages">Calcular paginas?</label>
-            <input type="checkbox" name="countPages" value="0" checked />
+            <input type="checkbox" name="countPages" value="0" id="countPages" checked />
         </div>
         <div>
             <label for="capitalizeText">Capitalizar oraciones?</label>
-            <input type="checkbox" name="capitalizeText" value="0" checked />
+            <input type="checkbox" name="capitalizeText" value="0" id="capitalizeText" checked />
         </div>
         <div>
             <button id="searchButton" type="submit">Enviar</button>
@@ -55,6 +56,21 @@
     <label>Texto capitalizado: </label>
     <div>
         <textarea id="capitalizedText" placeholder="Aqui aparecera tu texto capitalizado..."></textarea>
+    </div>
+
+
+    <div>
+        <h4>Aqui apareceran los textos ingresados: </h4>
+        <div>
+            <table id="pieceTable">
+                <tr>
+                    <th>Nombre obra</th>
+                    <th>Genero</th>
+                    <th>Autor</th>
+                    <th>Nro palabras</th>
+                </tr>
+            </table>
+        </div>
     </div>
 
     <form class="sortBook">
