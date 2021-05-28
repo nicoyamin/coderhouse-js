@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="crossorigin="anonymous"></script>
+    <script type="module" src="JS/script.js"></script>
     <title>CoderHouse JS - Proyecto final</title>
 </head>
 
@@ -16,6 +17,12 @@
         <div>
             <label for="inputFile">Subir archivo:</label>
             <input type="file" name="inputFile" id="inputFile">
+        </div><br>
+
+        <div>
+            <label for="inputSubject">Recomendar segun tema:</label>
+            <input type="text" placeholder="Tema de la obra" name="inputSubject" id="inputSubject">
+            <button id="suggestButton" type="button">Recomendar</button>
         </div><br>
 
         <div>
@@ -105,8 +112,6 @@
 
     </div>
 </body>
-
-<script src="JS/script.js"></script>
 
 
 </html>

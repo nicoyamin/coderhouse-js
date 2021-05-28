@@ -1,47 +1,15 @@
+import Piece from './Piece.js';
+
 $(document).ready(function() {
-    class Piece{
-        constructor(title, text, genre, author = "Anonimo") {
-            this.title = title;
-            this.text = text;
-            this.genre = genre;
-            this.author = author;
-            this.words = this.text.match(/(\w+)/g).length;
-        }
     
-        countWords() {
-            return this.text.match(/(\w+)/g).length;
-        }
-        
-        countPages() {
-            $('#pageCount').text(Math.ceil(this.words / wordsPerPage).toString());
-        }
-        
-        capitalizeText() {
-            let sentenceRegex = /.+?([\.\?\!\;]\s|$)/g;
-            let capitalizedText = this.text.replace(sentenceRegex, function (sentence) {
-                return sentence.charAt(0).toUpperCase() + sentence.substr(1).toLowerCase();
-            });
-            $('#capitalizedText').text(capitalizedText);
-        }
-    
-        addToTable() {
-            let table = document.getElementById("pieceTable");
-            let newRow   = table.insertRow();
-          
-            const keys = Object.keys(this)
-            for (const key of keys) {
-                  if(key != "text") {
-                      let newCell  = newRow.insertCell();
-                      newCell.innerHTML = this[key];
-                  }
-              }
-          }
-    
-    }
-    
-    const wordsPerPage = 500;
     let book = [];
     let currentBookIndex = 0;
+
+    const API_URL = "https://openlibrary.org";
+    const API_OUTPUT_FORMAT = ".json";
+    const LIMIT = "?limit=30";
+    const EMPTY_STRING = '';
+    const NO_BOOK_DESCRIPTION = "No description/text available"
     
     //Submits text entered by user and performs selected operations
     $('.textForm').submit(function(e) {
@@ -52,6 +20,12 @@ $(document).ready(function() {
         } else {
             performSelectedOperations(formData);
         }
+    
+        $('#title').val(EMPTY_STRING);
+        $('#author').val(EMPTY_STRING);
+        $('#genre').val(EMPTY_STRING);
+        $('#pieceInput').val(EMPTY_STRING);
+
     });
     
     //If user chooses to upload file, parses JSON and fills the form fields
@@ -68,6 +42,19 @@ $(document).ready(function() {
                 }                
                 fileReader.readAsText(this.files[0]);
             })
+
+    //If user chooses to get a recommendation, initiate AJAX call
+    $('#suggestButton').on('click', function() {
+        
+        let subject = ""; 
+
+        if($('#inputSubject').val() === "") {
+            alert("Por favor ingrese un tema!");
+        } else {
+            subject = $('#inputSubject').val();
+            getRecommendationOnSubject(subject);
+        }        
+    });
     
      //event listener for book sorting       
      $('.sortBook').submit(function(e) {
@@ -155,6 +142,40 @@ $(document).ready(function() {
         }
         
     }
+
+    //Call subjects API based on user input
+    function getRecommendationOnSubject(subject) {
+        const SUBJECT_API = "/subjects/";
+
+        console.log(API_URL + SUBJECT_API + subject + API_OUTPUT_FORMAT + LIMIT);
+        $.ajax({
+            method: "GET",
+            url: API_URL + SUBJECT_API + subject + API_OUTPUT_FORMAT + LIMIT,
+            success: function(bookList) {
+                parseRecommendedBooks(bookList.works);
+            }
+        })
+    }
     
+    //Get a random book from subject list and parses its values
+    function parseRecommendedBooks(bookList) {
+
+        let randomBookIndex = Math.floor(Math.random() * bookList.length);
+        let randomBook = bookList[randomBookIndex];
+        $.ajax({
+            method: "GET",
+            url: API_URL + randomBook.key + API_OUTPUT_FORMAT,
+            success: function(bookInfo) {
+                $('#title').val(bookInfo.title); 
+                $('#author').val(randomBook.authors[0].name);
+                $('#genre').val(randomBook.subject[0]);
+                if(bookInfo.hasOwnProperty('description') && bookInfo.description.hasOwnProperty('value') && bookInfo.description.value != "") {
+                    $('#pieceInput').val(bookInfo.description.value);            
+                } else {
+                    $('#pieceInput').val(NO_BOOK_DESCRIPTION);            
+                }
+            }
+        })
+    }
     
 });
