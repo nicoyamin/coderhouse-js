@@ -4,6 +4,7 @@ $(document).ready(function() {
     
     let book = [];
     let currentBookIndex = 0;
+    let currentTab = 0;
 
     const API_URL = "https://openlibrary.org";
     const API_OUTPUT_FORMAT = ".json";
@@ -11,8 +12,10 @@ $(document).ready(function() {
     const EMPTY_STRING = '';
     const NO_BOOK_DESCRIPTION = "No description/text available"
     
+    showTab(currentTab);
+
     //Submits text entered by user and performs selected operations
-    $('.textForm').submit(function(e) {
+    $('.pieceForm').submit(function(e) {
         e.preventDefault();
         const formData = new FormData(e.target);
         if(formData.get("pieceInput") === "") {
@@ -26,6 +29,10 @@ $(document).ready(function() {
         $('#genre').val(EMPTY_STRING);
         $('#pieceInput').val(EMPTY_STRING);
 
+        $('.bookTitle').text(formData.get("inputBookTitle"));
+        $('.bookAuthor').text(formData.get("inputBookAuthor"));
+
+        nextPrev(1);
     });
     
     //If user chooses to upload file, parses JSON and fills the form fields
@@ -62,47 +69,79 @@ $(document).ready(function() {
         const formData = new FormData(e.target);
         sortBook(formData.get("sortCriteria"));   
     });     
-    
-     //event listener for creating a book with selected pieces
+
     $('#createBookButton').on('click', function() {
-        displayPieceOnModal(currentBookIndex);
-        $("#bookModal").css("display","block")
+        $("#newPage div").remove();
+        book.forEach(piece => addPieceToBook(piece));
     });
 
-    $('.close').first().on('click', function() {
-        $("#bookModal").css("display","none")
-    });
-    
-    $('#nextPiece').on('click', function() {
-        if(currentBookIndex + 1 < book.length) {
-            displayPieceOnModal(++currentBookIndex);
-        } 
-    });
 
-    $('#previousPiece').on('click', function() {
-        if(currentBookIndex - 1 >= 0) {
-            displayPieceOnModal(--currentBookIndex);
-        } 
+    $('#pagePrev').on( 'click', function() {
+        let content = $('#newBook').children('div.bk-page').children('div.bk-content');
+        if( currentBookIndex > 0 ) {
+            --currentBookIndex;
+            content.removeClass( 'bk-content-current' ).eq( currentBookIndex ).addClass( 'bk-content-current' );
+        }
+        return false;
+    } );
+
+    $('#pageNext').on( 'click', function() {
+        let content = $('#newBook').children('div.bk-page').children('div.bk-content');
+        if( currentBookIndex < content.length - 1 ) {
+            ++currentBookIndex;
+            content.removeClass( 'bk-content-current' ).eq( currentBookIndex ).addClass( 'bk-content-current' );
+        }
+        return false;
+    } );
+
+    $('.prevBtn').on( 'click', function() {
+        nextPrev(-1);
+    } );
+
+    $('.nextBtn').on( 'click', function() {
+        nextPrev(1);
+    } );
+
+    $('.nextPiece').on( 'click', function() {
+        nextPrev(-2);
+    } );
+
+    $('#viewContent').on('click', function() {
+
+        let newBook = $("#newBook");
+        let content = $('#newBook').children('div.bk-page').children('div.bk-content');
+
+        if( newBook.data( 'opened' ) ) {
+            newBook.removeClass( 'bk-active' );
+            newBook.data( { opened : false, flip : false } ).removeClass( 'bk-viewinside' ).addClass( 'bk-bookdefault' );
+        }
+        else {
+            newBook.addClass( 'bk-active' );
+            newBook.data( { opened : true, flip : false } ).removeClass( 'bk-viewback bk-bookdefault' ).addClass( 'bk-viewinside' );
+            currentBookIndex = 0;
+            content.removeClass( 'bk-content-current' ).eq( currentBookIndex ).addClass( 'bk-content-current' );
+        }
     });
     
-    function displayPieceOnModal(currentBookIndex) {
-        const currentPiece = book[currentBookIndex];
-    
-        let modal = document.getElementById("pieceModal");
-        modal.innerHTML="";
-        
-        let title = document.createElement("h3");
+
+    function addPieceToBook(currentPiece) {
+
+        let content = document.createElement("div");
+        content.classList.add("bk-content");
+
+        let title = document.createElement("h5");
         title.textContent = currentPiece.title;
     
         let author = document.createElement("cite");
         author.textContent = "Autor: " + currentPiece.author;
-    
+
         let pieceText = document.createElement("p");
         pieceText.textContent = currentPiece.text;
-    
-        modal.appendChild(title);
-        modal.appendChild(author);
-        modal.appendChild(pieceText);
+
+        content.appendChild(title);
+        content.appendChild(author);
+        content.appendChild(pieceText);
+        document.getElementById("newPage").appendChild(content);
     
     }
     
@@ -177,5 +216,51 @@ $(document).ready(function() {
             }
         })
     }
+
+    function showTab(currentTab) {
+        // This function will display the specified tab of the form
+        let tabs = document.getElementsByClassName("tab");
+        tabs[currentTab].style.display = "block";
+        fixStepIndicator(currentTab)
+      }
+      
+      function nextPrev(n) {
+        // This function will figure out which tab to display
+        let tabs = document.getElementsByClassName("tab");
+        if (n == 1 && !validateForm()) return false;
+        tabs[currentTab].style.display = "none";
+        currentTab = currentTab + n;
+        showTab(currentTab);
+      }
+      
+      
+      function validateForm() {
+        // This function deals with validation of the form fields
+        let currentInput; 
+        let valid = true;
+        let tabs = document.getElementsByClassName("tab");
+        let inputs = tabs[currentTab].getElementsByClassName("requiredInput");
+        // A loop that checks every input field in the current tab:
+        for (currentInput = 0; currentInput < inputs.length; currentInput++) {
+          if (inputs[currentInput].value == "") {
+            inputs[currentInput].className += " invalid";
+            valid = false;
+          }
+        }
+        if (valid) {
+          document.getElementsByClassName("step")[currentTab].className += " finish";
+        }
+        return valid; // return the valid status
+      }
+      
+      function fixStepIndicator(currentTab) {
+        // This function removes the "active" class of all steps
+        let currentStep;
+        let steps = document.getElementsByClassName("step");
+        for (currentStep = 0; currentStep < steps.length; currentStep++) {
+          steps[currentStep].className = steps[currentStep].className.replace(" active", "");
+        }
+        steps[currentTab].className += " active";
+      }
     
 });
